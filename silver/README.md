@@ -14,7 +14,7 @@ Onde está os dados limpos, padronizados e enriquecidos, movidos da camada Bronz
 
 |  Prazo | Atividade | Responsável| Revisores |  
 |--------|-----------|--------------| ----------|
-|       | **Job ETL**<br> - Apagar colunas: ability_1, ability_2, ability_3, number_pokemon_with_typing, primary_color. <br>- Acrescentar outras colunas se necessário.   |  |  |
+|       | **Job ETL**<br> - Apagar colunas: ability_1, ability_2, ability_3, number_pokemon_with_typing, primary_color. <br>- Acrescentar outras colunas se necessário.   | [Larissa Stéfane Barboza Santos](https://github.com/SkywalkerSupreme) |  |
 |       | **Job ETL**<br>- Corrigir coluna pokedex_number em relação ao nome dos pokémons, e colocar nome da coluna de pokedex_ID, ou algum nome relacionado a ID.<br>- Apagar colunas: shape, bmi, special_attack, special_defense, speed.  |  |  |
 |       | **Job ETL**<br> - Apagar colunas: mean, standard_deviation, exp_to_level_100, can_evolve, final_evolution. <br>- Apagar Null das colunas: type_2 e evolves_from. | [Maria Eduarda Barbosa](https://github.com/Madu01) |  |
 |       | **Job ETL**<br> - Apagar colunas: is_default, baby_pokemon, genus, egg_group_1, egg_group_2. <br> - Colocar comando para visualizar a tabela já tratada |  |  |
