@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_silver
+    environment:
+      POSTGRES_DB: silver_db
+      POSTGRES_USER: silver_user
+      POSTGRES_PASSWORD: silver_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - silver_network
+
+volumes:
+  postgres_data:
+
+networks:
+  silver_network:
+    driver: bridge

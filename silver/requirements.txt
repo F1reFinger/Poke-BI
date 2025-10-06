@@ -1,0 +1,7 @@
+jupyter==1.0.0
+pandas==2.1.0
+matplotlib==3.7.2
+seaborn==0.12.2
+psycopg2-binary==2.9.7
+sqlalchemy==2.0.20
+ipykernel==6.25.0
