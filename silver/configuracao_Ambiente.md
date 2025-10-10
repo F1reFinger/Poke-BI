@@ -55,4 +55,45 @@ Já dentro do terminal do contêiner, a conexão ao banco de dados silver_db é 
    \dt
   ```
 
+### 5. Conjunto dos comandos acima:
+
+ ```bash
+  docker-compose up --build
+  docker ps -a
+  docker exec -it <ID_DO_CONTAINER> bash
+  psql -U silver_user -d silver_db
+  \dt
+  ```
+
+## Execução pela Segunda ou Mais Vezes
+
+   Após o ambiente já ter sido construído, os comandos abaixo iniciam os serviços de forma mais rápida.
+
+### 1. Iniciar os Contêineres Existentes
+
+  Este comando apenas inicia os contêineres que já foram criados, sem a necessidade de construir a imagem novamente.
+
+  ```bash
+   sudo docker-compose start
+  ```
+
+### 2. Verificar e Acessar
+
+```bash
+  sudo docker ps -a
+  docker exec -it <ID_DO_CONTAINER> bash
+  psql -U silver_user -d silver_db
+  \dt
+  ```
+
+### 3. Para Parar o Ambiente
+
+```bash
+docker-compose stop
+  ```
+
+## Vídeo mostrando toda execução
+
+Abaixo há um vídeo explicando e mostrando os comandos:
+
 
