@@ -16,6 +16,18 @@ services:
     networks:
       - silver_network
 
+  popula:
+    image: jupyter/base-notebook:python-3.11
+    depends_on:
+      - postgres
+    volumes:
+      - ./silver:/scripts  
+    working_dir: /scripts
+    command: >
+      sh -c "pip install pandas psycopg2-binary && jupyter nbconvert --to notebook --execute PopulaBanco.ipynb --inplace"
+    networks:
+      - silver_network
+
 volumes:
   postgres_data:
 
