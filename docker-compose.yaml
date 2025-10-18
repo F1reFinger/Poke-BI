@@ -21,10 +21,11 @@ services:
     depends_on:
       - postgres
     volumes:
-      - ./silver:/scripts  
+      - ./Transformer:/scripts 
+      - ./Data_Layer:/Data_Layer 
     working_dir: /scripts
     command: >
-      sh -c "pip install pandas psycopg2-binary && jupyter nbconvert --to notebook --execute PopulaBanco.ipynb --inplace"
+      sh -c "pip install pandas psycopg2-binary && jupyter nbconvert --to notebook --execute JobETL.ipynb --inplace"
     networks:
       - silver_network
 
