@@ -3,18 +3,18 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15
-    container_name: postgres_silver
+    container_name: postgres_pokedex
     environment:
-      POSTGRES_DB: silver_db
-      POSTGRES_USER: silver_user
-      POSTGRES_PASSWORD: silver_password
+      POSTGRES_DB: pokedex_db
+      POSTGRES_USER: pokedex_user
+      POSTGRES_PASSWORD: pokedex_password
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-scripts:/docker-entrypoint-initdb.d
     networks:
-      - silver_network
+      - pokedex_network
 
   popula:
     image: jupyter/base-notebook:python-3.11
@@ -25,13 +25,13 @@ services:
       - ./Data_Layer:/Data_Layer 
     working_dir: /scripts
     command: >
-      sh -c "pip install pandas psycopg2-binary && jupyter nbconvert --to notebook --execute JobETL.ipynb --inplace"
+      sh -c "pip install pandas psycopg2-binary && jupyter nbconvert --to notebook --execute etl_rw_slv.ipynb --inplace"
     networks:
-      - silver_network
+      - pokedex_network
 
 volumes:
   postgres_data:
 
 networks:
-  silver_network:
+  pokedex_network:
     driver: bridge

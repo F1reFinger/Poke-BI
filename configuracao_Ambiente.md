@@ -44,7 +44,7 @@ Os passos a seguir são para a **primeira execução** do ambiente ou caso tenha
 Já dentro do terminal do contêiner, a conexão ao banco de dados silver_db é feita com o usuário silver_user.
 
 ```bash
-   psql -U silver_user -d silver_db
+   psql -U pokedex_user -d pokedex_db
   ```
 
 ### 5. Listar as Tabelas
@@ -61,7 +61,7 @@ Já dentro do terminal do contêiner, a conexão ao banco de dados silver_db é 
   docker-compose up --build
   docker ps -a
   docker exec -it <ID_DO_CONTAINER> bash
-  psql -U silver_user -d silver_db
+  psql -U pokedex_user -d pokedex_db
   \dt
   ```
 
@@ -82,7 +82,7 @@ Já dentro do terminal do contêiner, a conexão ao banco de dados silver_db é 
 ```bash
   sudo docker ps -a
   docker exec -it <ID_DO_CONTAINER> bash
-  psql -U silver_user -d silver_db
+  psql -U pokedex_user -d pokedex_db
   \dt
   ```
 
