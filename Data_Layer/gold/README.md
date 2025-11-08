@@ -6,4 +6,5 @@ Dados agregados e otimizados para consumo específico de negócio (relatórios, 
 
 | Responsáveis | Atividade                        | Revisores                 |
 |--------------|----------------------------------|---------------------------|
-|   --    | --   | -- |
+|   [Larissa Stéfane Barboza](https://github.com/SkywalkerSupreme)      | **Criação das Consultas (SELECTs)**<br> - Definição das 11 consultas SQL baseadas no MER (Esquema Estrela) para alimentar os gráficos do Power BI. | - | 
+|   -    | --   | -- |
