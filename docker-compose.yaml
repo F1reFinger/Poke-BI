@@ -16,18 +16,18 @@ services:
     networks:
       - pokedex_network
 
-  popula:
-    image: jupyter/base-notebook:python-3.11
-    depends_on:
-      - postgres
-    volumes:
-      - ./Transformer:/scripts 
-      - ./Data_Layer:/Data_Layer 
-    working_dir: /scripts
-    command: >
-      sh -c "pip install pandas psycopg2-binary && jupyter nbconvert --to notebook --execute etl_rw_slv.ipynb --inplace"
-    networks:
-      - pokedex_network
+#  popula:
+#    image: jupyter/base-notebook:python-3.11
+#    depends_on:
+#      - postgres
+#    volumes:
+#      - ./Transformer:/scripts 
+#      - ./Data_Layer:/Data_Layer 
+#    working_dir: /scripts
+#    command: >
+#      sh -c "pip install pandas psycopg2-binary && jupyter nbconvert --to notebook --execute etl_rw_slv.ipynb --inplace"
+#    networks:
+#      - pokedex_network
 
 volumes:
   postgres_data:

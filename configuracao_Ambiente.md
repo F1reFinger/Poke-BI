@@ -47,12 +47,13 @@ Já dentro do terminal do contêiner, a conexão ao banco de dados silver_db é 
    psql -U pokedex_user -d pokedex_db
   ```
 
-### 5. Listar as Tabelas
+### 5. Listar os schemas e Tabelas 
 
   Após a conexão, o comando \dt pode é usado para verificar se as tabelas da camada Silver foram criadas.
 
   ```bash
-   \dt
+  \dn 
+  \dt nomeSchema.*
   ```
 
 ### 5. Conjunto dos comandos acima:
@@ -62,7 +63,8 @@ Já dentro do terminal do contêiner, a conexão ao banco de dados silver_db é 
   docker ps -a
   docker exec -it <ID_DO_CONTAINER> bash
   psql -U pokedex_user -d pokedex_db
-  \dt
+  \dn 
+  \dt nomeSchema.*
   ```
 
 ## Execução pela Segunda ou Mais Vezes
@@ -83,7 +85,8 @@ Já dentro do terminal do contêiner, a conexão ao banco de dados silver_db é 
   sudo docker ps -a
   docker exec -it <ID_DO_CONTAINER> bash
   psql -U pokedex_user -d pokedex_db
-  \dt
+  \dn 
+  \dt nomeSchema.*
   ```
 
 ### 3. Para Parar o Ambiente
