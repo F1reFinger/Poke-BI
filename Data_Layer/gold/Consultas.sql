@@ -1,236 +1,174 @@
--- ARQUIVO DE CONSULTAS DA CAMADA GOLD PARA O POWER BI
+-- ============================================================
+-- REFACTORED POKÉMON DASHBOARD SQL QUERIES
+-- ============================================================
 
--- Consulta 1: Contagem de Pokémon por Tipo (Gráfico de Barras)
+-- ============================================================
+-- BATTLE STATISTICS QUERIES (Dim_btl)
+-- ============================================================
+
+-- 1) Pokémon Attack Distribution
 SELECT
-    type_1,
-    COUNT(pokedex_number) AS total_pokemon
-FROM
-    Fat_pokemon
-GROUP BY
-    type_1
-ORDER BY
-    total_pokemon DESC;
+    b.atk AS attack_value,
+    COUNT(*) AS quantity
+FROM dw.Fat_pokdx f
+INNER JOIN dw.Dim_btl b ON b.SRK_btl = f.SRK_btl
+GROUP BY b.atk
+ORDER BY b.atk;
 
-
--- Consulta 2: Lista de Pokémon Lendários (Tabela/Filtro)
-
+-- 2) Pokémon Defense Distribution
 SELECT
-    pokemon_name,
-    type_1,
-    type_2,
-    generation
-FROM
-    Fat_pokemon
-WHERE
-    legendary = TRUE
-ORDER BY
-    pokemon_name;
+    b.dfs AS defense_value,
+    COUNT(*) AS quantity
+FROM dw.Fat_pokdx f
+INNER JOIN dw.Dim_btl b ON b.SRK_btl = f.SRK_btl
+GROUP BY b.dfs
+ORDER BY b.dfs;
 
-
-
--- Consulta 3: Contagem de Pokémon por Geração/Região (Gráfico de Barras)
+-- 3) Capture Rate Distribution
 SELECT
-    generation,
-    COUNT(pokedex_number) AS total_pokemon
-FROM
-    Fat_pokemon
-GROUP BY
-    generation
-ORDER BY
-    generation ASC;
+    b.cap_rte AS capture_rate,
+    COUNT(*) AS quantity
+FROM dw.Fat_pokdx f
+INNER JOIN dw.Dim_btl b ON b.SRK_btl = f.SRK_btl
+GROUP BY b.cap_rte
+ORDER BY b.cap_rte;
 
+-- ============================================================
+-- POKÉMON CLASSIFICATION QUERIES (Dim_pkm)
+-- ============================================================
 
-
--- Consulta 4: Tabela de Atributos Físicos (IV)
-
+-- 4) Pokémon Count by Primary Type
 SELECT
-    F.pokemon_name,
-    F.height,
-    F.weight,
-    B.attack,
-    B.defense,
-    -- (O 'total_stats' será calculado no Power BI como a soma dos status)
-    (B.attack + B.defense) AS stats_fisicos_parcial 
-FROM
-    Fat_pokemon AS F
-JOIN
-    Dim_Batlh AS B ON F.SRK_btl = B.SRK_btl;
+    p.tp1 AS primary_type,
+    COUNT(*) AS quantity
+FROM dw.Fat_pokdx f
+INNER JOIN dw.Dim_pkm p ON p.SRK_pkn = f.SRK_pkn
+GROUP BY p.tp1
+ORDER BY quantity DESC;
 
-
-
--- Consulta 5: Tabela de Captura (para Análise de Dificuldade)
-
+-- 5) Pokémon Count by Generation
 SELECT
-    F.pokemon_name,
-    B.capture_rate,
-    B.base_experience,
-    B.exp_type
-FROM
-    Fat_pokemon AS F
-JOIN
-    Dim_Batlh AS B ON F.SRK_btl = B.SRK_btl
-ORDER BY
-    B.capture_rate ASC, B.base_experience DESC;
+    p.gen AS generation,
+    COUNT(*) AS quantity
+FROM dw.Fat_pokdx f
+INNER JOIN dw.Dim_pkm p ON p.SRK_pkn = f.SRK_pkn
+GROUP BY p.gen
+ORDER BY p.gen;
 
-
-
--- Consulta 6: Tabela de Vantagens (Matriz de Tipos Puros)
-
+-- 6) Legendary Pokémon Count by Primary Type
 SELECT
-    F.type_1,
-    AVG(E.against_normal) AS against_normal,
-    AVG(E.against_fire) AS against_fire,
-    AVG(E.against_water) AS against_water,
-    AVG(E.against_electric) AS against_electric,
-    AVG(E.against_grass) AS against_grass,
-    AVG(E.against_ice) AS against_ice,
-    AVG(E.against_fighting) AS against_fighting,
-    AVG(E.against_poison) AS against_poison,
-    AVG(E.against_ground) AS against_ground,
-    AVG(E.against_flying) AS against_flying,
-    AVG(E.against_psychic) AS against_psychic,
-    AVG(E.against_bug) AS against_bug,
-    AVG(E.against_rock) AS against_rock,
-    AVG(E.against_ghost) AS against_ghost,
-    AVG(E.against_dragon) AS against_dragon,
-    AVG(E.against_dark) AS against_dark,
-    AVG(E.against_steel) AS against_steel,
-    AVG(E.against_fairy) AS against_fairy
-FROM
-    Fat_pokemon AS F
-JOIN
-    Dim_EfetContr AS E ON F.SRK_efctr = E.SRK_efctr
-WHERE
-    F.type_2 = ' ' -- Assumindo que o ETL trata nulos como um espaço em branco
-GROUP BY
-    F.type_1
-ORDER BY
-    F.type_1;
+    p.tp1 AS primary_type,
+    COUNT(*) AS quantity
+FROM dw.Dim_pkm p
+INNER JOIN dw.Fat_pokdx f ON f.SRK_pkn = p.SRK_pkn
+WHERE p.leg = TRUE
+GROUP BY p.tp1
+ORDER BY quantity DESC;
 
-
-
--- Consulta 7: Distribuição de Gênero (Gráfico de Pizza)
-
+-- 7) Pokémon with Alolan Forms
 SELECT
     CASE
-        WHEN B.genderless = TRUE THEN 'Sem Gênero'
-        WHEN B.female_rate = 0.0 THEN 'Apenas Macho'
-        WHEN B.female_rate = 1.0 THEN 'Apenas Fêmea'
-        ELSE 'Macho e Fêmea'
-    END AS tipo_genero,
-    COUNT(F.pokedex_number) AS total_pokemon
-FROM
-    Fat_pokemon AS F
-JOIN
-    Dim_Batlh AS B ON F.SRK_btl = B.SRK_btl
-GROUP BY
-    tipo_genero
-ORDER BY
-    total_pokemon DESC;
+        WHEN p.all_frm = TRUE THEN 'Has Alolan Form'
+        ELSE 'No Alolan Form'
+    END AS alolan_form_status,
+    COUNT(*) AS quantity
+FROM dw.Dim_pkm p
+INNER JOIN dw.Fat_pokdx f ON f.SRK_pkn = p.SRK_pkn
+GROUP BY p.all_frm
+ORDER BY p.all_frm;
 
-
-
--- Consulta 8: Contagem de Formas Especiais (Gráfico de Barras)
-
+-- 8) Pokémon with Galarian Forms
 SELECT
-    'Mega Evoluções' AS tipo_forma,
-    COUNT(F.pokedex_number) AS total
-FROM
-    Fat_pokemon AS F
-JOIN
-    Dim_Form AS D_Form ON F.SRK_frm = D_Form.SRK_frm
-WHERE
-    D_Form.mega_evolution = TRUE
+    CASE
+        WHEN p.glr_frm = TRUE THEN 'Has Galarian Form'
+        ELSE 'No Galarian Form'
+    END AS galarian_form_status,
+    COUNT(*) AS quantity
+FROM dw.Dim_pkm p
+INNER JOIN dw.Fat_pokdx f ON f.SRK_pkn = p.SRK_pkn
+GROUP BY p.glr_frm
+ORDER BY p.glr_frm;
 
-UNION ALL
+-- ============================================================
+-- TYPE EFFECTIVENESS QUERIES (Dim_efetContr)
+-- ============================================================
 
+-- 9) Average Effectiveness Against Normal Type
 SELECT
-    'Formas de Alola' AS tipo_forma,
-    COUNT(F.pokedex_number) AS total
-FROM
-    Fat_pokemon AS F
-JOIN
-    Dim_Form AS D_Form ON F.SRK_frm = D_Form.SRK_frm
-WHERE
-    D_Form.alolan_form = TRUE
+    ROUND(AVG(e.agt_nrm)::numeric, 2) AS avg_effectiveness_normal
+FROM dw.Fat_pokdx f
+INNER JOIN dw.Dim_efetContr e ON e.SRK_eft = f.SRK_eft;
 
-UNION ALL
-
+-- 10) Average Effectiveness Against Fighting Type
 SELECT
-    'Formas de Galar' AS tipo_forma,
-    COUNT(F.pokedex_number) AS total
-FROM
-    Fat_pokemon AS F
-JOIN
-    Dim_Form AS D_Form ON F.SRK_frm = D_Form.SRK_frm
-WHERE
-    D_Form.galarian_form = TRUE;
+    ROUND(AVG(e.agt_fgt)::numeric, 2) AS avg_effectiveness_fighting
+FROM dw.Fat_pokdx f
+INNER JOIN dw.Dim_efetContr e ON e.SRK_eft = f.SRK_eft;
 
-
--- Consulta 9: Pokémon Iniciais (Evolução)
-
+-- 11) Average Effectiveness Against Rock Type
 SELECT
-    pokemon_name,
-    type_1,
-    generation,
-    legendary
-FROM
-    Fat_pokemon
-WHERE
-    evolves_from = ' ' 
-ORDER BY
-    pokedex_number;
+    ROUND(AVG(e.agt_rck)::numeric, 2) AS avg_effectiveness_rock
+FROM dw.Fat_pokdx f
+INNER JOIN dw.Dim_efetContr e ON e.SRK_eft = f.SRK_eft;
 
-
-
--- Consulta 10: Os 10 Melhores "Tanques" (Defesa Alta)
-
+-- 12) Average Effectiveness Against Dragon Type
 SELECT
-    F.pokemon_name,
-    F.type_1,
-    F.type_2,
-    B.defense
-FROM
-    Fat_pokemon AS F
-JOIN
-    Dim_Batlh AS B ON F.SRK_btl = B.SRK_btl
-WHERE
-    F.legendary = FALSE
-ORDER BY
-    B.defense DESC
-LIMIT 10;
+    ROUND(AVG(e.agt_drg)::numeric, 2) AS avg_effectiveness_dragon
+FROM dw.Fat_pokdx f
+INNER JOIN dw.Dim_efetContr e ON e.SRK_eft = f.SRK_eft;
 
+-- ============================================================
+-- COMBINED EFFECTIVENESS STATISTICS
+-- ============================================================
 
--- Consulta 11: Tabela Mestra (Flat Table para Power BI)
-
+-- 13) Normal Type Effectiveness Statistics
 SELECT
-    -- Fatos e atributos da Fat_pokemon
-    F.pokedex_number,
-    F.pokemon_name,
-    F.type_1,
-    F.type_2,
-    F.height,
-    F.weight,
-    F.generation,
-    F.legendary,
-    F.evolves_from,
-    
-    -- Atributos da Dim_Form
-    D_Form.mega_evolution,
-    D_Form.alolan_form,
-    D_Form.galarian_form,
-    D_Form.forms_switchable,
-    
-    -- Atributos da Dim_Batlh
-    B.attack,
-    B.defense,
-    B.capture_rate,
-    B.base_experience,
-    B.exp_type
+    ROUND(AVG(e.agt_nrm)::numeric, 2) AS avg_effectiveness_normal,
+    ROUND(MAX(e.agt_nrm)::numeric, 2) AS max_effectiveness_normal
+FROM dw.Fat_pokdx f
+INNER JOIN dw.Dim_efetContr e ON e.SRK_eft = f.SRK_eft;
 
-FROM
-    Fat_pokemon AS F
-JOIN
-    Dim_Form AS D_Form ON F.SRK_frm = D_Form.SRK_frm
-JOIN
-    Dim_Batlh AS B ON F.SRK_btl = B.SRK_btl;
+-- 14) Fighting Type Effectiveness Statistics
+SELECT
+    ROUND(AVG(e.agt_fgt)::numeric, 2) AS avg_effectiveness_fighting,
+    ROUND(MAX(e.agt_fgt)::numeric, 2) AS max_effectiveness_fighting
+FROM dw.Fat_pokdx f
+INNER JOIN dw.Dim_efetContr e ON e.SRK_eft = f.SRK_eft;
+
+-- 15) Rock Type Effectiveness Statistics
+SELECT
+    ROUND(AVG(e.agt_rck)::numeric, 2) AS avg_effectiveness_rock,
+    ROUND(MAX(e.agt_rck)::numeric, 2) AS max_effectiveness_rock
+FROM dw.Fat_pokdx f
+INNER JOIN dw.Dim_efetContr e ON e.SRK_eft = f.SRK_eft;
+
+-- ============================================================
+-- ENHANCED QUERIES FOR BETTER DASHBOARD VISUALIZATION
+-- ============================================================
+
+
+
+-- 17) Pokémon Type Combinations
+SELECT
+    p.tp1 AS primary_type,
+    'None' AS secondary_type,
+    COUNT(*) AS quantity
+FROM dw.Fat_pokdx f
+INNER JOIN dw.Dim_pkm p ON p.SRK_pkn = f.SRK_pkn
+GROUP BY p.tp1
+ORDER BY quantity DESC;
+
+
+-- 18) Legendary Pokémon Statistics
+SELECT
+    COUNT(*) AS total_legendary,
+    ROUND(AVG(b.atk), 2)::numeric AS avg_attack_legendary,
+    ROUND(AVG(b.dfs), 2)::numeric AS avg_defense_legendary
+FROM dw.Fat_pokdx f
+INNER JOIN dw.Dim_btl b ON b.SRK_btl = f.SRK_btl
+INNER JOIN dw.Dim_pkm p ON p.SRK_pkn = f.SRK_pkn
+WHERE p.leg = TRUE;
+
+-- ============================================================
+-- END OF REFACTORED QUERIES
+-- ============================================================
